@@ -1,2 +1,8 @@
+pyppeteer
 celery==5.0.5
 redis
+selenium
+requests
+beautifulsoup4
+psycopg2
+datetime

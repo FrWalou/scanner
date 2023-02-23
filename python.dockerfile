@@ -17,22 +17,6 @@ RUN apt-get update && \
         libasound2 \
         xvfb
 
-RUN pip install pyppeteer
-
 RUN pip install -r requirements.txt
-
-RUN pip install redis
-
-RUN pip install requests
-
-RUN pip install celery
-
-RUN pip install beautifulsoup4
-
-RUN pip install selenium
-
-RUN pip install psycopg2
-
-RUN pip install datetime
 
 CMD ["python", "background_worker.py"]
