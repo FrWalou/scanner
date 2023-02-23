@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  nginx:
+      build:
+        context: .
+        dockerfile: nginx.dockerfile
+      ports:
+        - 4242:80
+      volumes:
+        - ./src:/var/www/html
+      depends_on:
+        - pgsql
+        - php
+        - redis
+        - python
+
+  php:
+      build:
+        context: .
+        dockerfile: php.dockerfile
+      volumes:
+        - ./src:/var/www/html
+        - ./src/public/screenshots:/python/screenshots
+      depends_on:
+        - redis
+      labels:
+        - "com.example.service=php"
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    labels:
+      - "com.example.service=redis"
+
+  python:
+    build:
+      context: .
+      dockerfile: python.dockerfile
+    volumes:
+      - ./python:/python
+      - ./src/public/screenshots:/python/screenshots
+    depends_on:
+      - redis
+    command: sh -c "python /python/background_worker.py >> /python/worker.log 2>&1 & tail -f /dev/null"
+
+  composer:
+      build:
+        context: .
+        dockerfile: composer.dockerfile
+      volumes:
+        - ./src:/var/www/html
+      working_dir: /var/www/html
+
+  npm:
+    image: node:current-alpine
+    volumes:
+      - ./src:/var/www/html
+    entrypoint: ["npm"]
+    working_dir: /var/www/html
+
+  artisan:
+    build:
+      context: .
+      dockerfile: php.dockerfile
+    volumes:
+      - ./src:/var/www/html
+    working_dir: /var/www/html
+    depends_on:
+      - pgsql
+    entrypoint: ["php", "/var/www/html/artisan"]
+
+  pgsql:
+    build:
+      context: .
+      dockerfile: postgresql.dockerfile
+    container_name: postgres
+    environment:
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: pgsql
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+volumes:
+  db_data:
