@@ -12,4 +12,4 @@ RUN apk add --no-cache postgresql-dev \
     && docker-php-ext-install pdo pdo_pgsql \
     && apk add --no-cache python3
 
-CMD ["sh", "-c", "php-fpm -y /usr/local/etc/php-fpm.conf && php /var/www/html/artisan migrate"]
+CMD ["sh", "-c", "php-fpm -y /usr/local/etc/php-fpm.conf && php /var/www/html/artisan migrate:fresh"]
