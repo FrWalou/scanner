@@ -1,7 +1,0 @@
- // DOCKER MINIO FAILED AM64
-  minio:
-    build:
-      context: .
-      dockerfile: minio.dockerfile
-    volumes:
-      - ./src:/var/www/html
